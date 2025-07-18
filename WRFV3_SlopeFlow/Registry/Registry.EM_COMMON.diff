@@ -1,0 +1,25 @@
+1749,1752c1749,1752
+< state   real   xkmv            ikj      misc        1         -     r         "xkmv"                  "VERTICAL EDDY VISCOSITY"     "m2 s-1"      
+< state   real   xkmh            ikj      misc        1         -     r         "xkmh"                  "HORIZONTAL EDDY VISCOSITY"   "m2 s-1"      
+< state   real   xkhv            ikj      misc        1         -     r         "xkhv"                  "VERTICAL EDDY DIFFUSIVITY OF HEAT"                               "m2 s-1"      
+< state   real   xkhh            ikj      misc        1         -     r         "xkhh"                  "HORIZONTAL EDDY DIFFUSIVITY OF HEAT"                             "m2 s-1"      
+---
+> state   real   xkmv            ikj      misc        1         -     rh         "xkmv"                  "VERTICAL EDDY VISCOSITY"     "m2 s-1"      
+> state   real   xkmh            ikj      misc        1         -     rh         "xkmh"                  "HORIZONTAL EDDY VISCOSITY"   "m2 s-1"      
+> state   real   xkhv            ikj      misc        1         -     rh         "xkhv"                  "VERTICAL EDDY DIFFUSIVITY OF HEAT"                               "m2 s-1"      
+> state   real   xkhh            ikj      misc        1         -     rh         "xkhh"                  "HORIZONTAL EDDY DIFFUSIVITY OF HEAT"                             "m2 s-1"      
+1754c1754
+< state   real    BN2            ikj      misc        1         -     r         "BN2"                   "BRUNT-VAISALA FREQUENCY"                                         "s-2"
+---
+> state   real    BN2            ikj      misc        1         -     rh         "BN2"                   "BRUNT-VAISALA FREQUENCY"                                         "s-2"
+2546a2547,2556
+> 
+> # flag added to control which ideal terrain option is used for les test case
+> rconfig   integer ideal_terrain           namelist,bdy_control  max_domains    0     rh      "ideal_terrain"            "!KAL" ""
+> rconfig   real    slope1                  namelist,bdy_control  max_domains    0     rh      "bottom slope angle"            "!ADAC" ""
+> rconfig   real    fetch1                  namelist,bdy_control  max_domains    0     rh      "bottom slope length"            "!ADAC" ""
+> rconfig   real    slope2                  namelist,bdy_control  max_domains    0     rh      "top slope angle"            "!ADAC" ""
+> rconfig   real    fetch2                  namelist,bdy_control  max_domains    0     rh      "top slope length"            "!ADAC" ""
+> # # flag added to control whether idealized soil properties are added in les test case
+> rconfig  logical  ideal_soil              namelist,bdy_control          1    .false. rh      "ideal_soil"            "!KAL" ""
+> 

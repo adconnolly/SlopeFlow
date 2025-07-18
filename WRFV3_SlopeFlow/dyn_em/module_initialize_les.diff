@@ -1,0 +1,291 @@
+39a40,44
+>    !DJW 140408 added USE module_soil_pre along with subroutines 
+> !           monthly_min_max and monthly_interp_to_date. module_soil_pre
+> !           is necessary since several variables are defined in it that 
+> !           are needed for monthly_interp_to_date.
+>    USE module_soil_pre
+123c128
+<   REAL :: mtn_ht
+---
+>   REAL :: mtn_ht,x_dist,y_dist,L1,L2,H1,H,sinetheta1,sinetheta2
+126a132,133
+>    !DJW 140723 added for ideal_soil code
+>    INTEGER :: ns
+476,480c483,567
+<   DO j=jts,jte
+<   DO i=its,ite
+<     grid%ht(i,j) = 0.
+<   ENDDO
+<   ENDDO
+---
+> 
+> !KAL  ------------change ht for trex-------------------------------------
+>   if (config_flags%ideal_terrain == 1) then
+>       grid%ht = 0.
+>   elseif (config_flags%ideal_terrain == 2) then
+>       DO j=jts,jte-1
+>       DO i=its,ite-1
+>          ! calculate x with x=0 as the middle of the domain
+>          x_dist = (-ide/2.)*config_flags%dx + i*config_flags%dx
+>          if (ABS(x_dist)<=500.) then
+>             grid%ht(i,j) = 0.
+>          elseif ((ABS(x_dist)>500.).AND.(ABS(x_dist)<9500.)) then
+>             grid%ht(i,j) = 1500.*(0.5 - 0.5*COS((pi*(ABS(x_dist)-500.))/9000.))
+>          elseif ((ABS(x_dist)>=9500.).AND.(ABS(x_dist)<=10500.)) then
+>             grid%ht(i,j) = 1500.
+>          elseif ((ABS(x_dist)>10500.).AND.(ABS(x_dist)<19500.)) then
+>             grid%ht(i,j) = 1500.*(0.5 +0.5*COS((pi*(ABS(x_dist)-10500.))/9000.))
+>          elseif (ABS(x_dist)>=19500.) then
+>             grid%ht(i,j) = 0.
+>          endif
+>       ENDDO
+>       ENDDO
+>   elseif (config_flags%ideal_terrain == 3) then
+>       DO j=jts,jte-1
+>       DO i=its,ite-1
+>          ! calculate x with x=0 as the middle of the domain
+>          x_dist = (-ide/2.)*config_flags%dx + i*config_flags%dx
+>          if (ABS(x_dist)<=500.) then
+>             grid%ht(i,j) = 0.
+>          elseif ((ABS(x_dist)>500.).AND.(ABS(x_dist)<9500.)) then
+>             grid%ht(i,j) = 1500.*(0.5 - 0.5*COS((pi*(ABS(x_dist)-500.))/9000.))
+>          elseif ((ABS(x_dist)>=9500.).AND.(ABS(x_dist)<=10500.)) then
+>             grid%ht(i,j) = 1500.
+>          elseif ((ABS(x_dist)>10500.).AND.(ABS(x_dist)<19500.)) then
+>             grid%ht(i,j) = 1500.*(0.5 +0.5*COS((pi*(ABS(x_dist)-10500.))/9000.))
+>          elseif (ABS(x_dist)>=19500.) then
+>             grid%ht(i,j) = 0.
+>          endif
+>          ! calculate the y distance with y=0 as the middle of the domain
+>          y_dist = (-jde/2.)*config_flags%dy + j*config_flags%dy
+>          if (ABS(y_dist)<=100000.) then
+>             grid%ht(i,j) = grid%ht(i,j)
+>          elseif ((ABS(y_dist)>100000.).AND.(ABS(y_dist)<109000.)) then
+>             grid%ht(i,j) = grid%ht(i,j)*(0.5 +0.5*COS((pi*(ABS(y_dist)-100000.))/9000.))
+>          elseif (ABS(y_dist)>=109000.) then
+>             grid%ht(i,j) = 0.
+>          endif
+>       ENDDO
+>       ENDDO
+>   elseif (config_flags%ideal_terrain == 4) then
+>       DO j=jts,jte-1
+>       DO i=its,ite-1
+>          ! calculate x with x=0 as the middle of the domain
+>          x_dist = ABS((-ide/2.)*config_flags%dx + i*config_flags%dx)
+>          sinetheta1=SIN(config_flags%slope1*pi/180.0)
+>          sinetheta2=SIN(config_flags%slope2*pi/180.0)
+>          L1=config_flags%fetch1
+>          L2=config_flags%fetch2
+>          H1=sinetheta1*L1
+>          H=H1+sinetheta2*L2
+>          if (x_dist>=L1+L2) then
+>             grid%ht(i,j) = 0.
+>          elseif (x_dist>L2) then
+>             grid%ht(i,j) = H1-sinetheta1*(x_dist-L2)
+>          else
+>             grid%ht(i,j) = H-sinetheta2*x_dist
+>          endif
+>          ! calculate the y distance with y=0 as the middle of the domain
+>          !y_dist = (-jde/2.)*config_flags%dy + j*config_flags%dy
+>          !if (ABS(y_dist)<=100000.) then
+>           !  grid%ht(i,j) = grid%ht(i,j)
+>          !elseif ((ABS(y_dist)>100000.).AND.(ABS(y_dist)<109000.)) then
+>           !  grid%ht(i,j) = grid%ht(i,j)*(0.5+0.5*COS((pi*(ABS(y_dist)-100000.))/9000.))
+> !         elseif (ABS(y_dist)>=109000.) then
+>  !           grid%ht(i,j) = 0.
+>   !       endif
+>       ENDDO
+>       ENDDO
+> 
+>   endif
+>  
+> 
+> 
+> 
+> 
+845a933,1003
+> !DJW 140407 ---set up variables used for LSM---
+>   IF (config_flags%ideal_soil) THEN
+>     write(*,'(A)') "DJW: using ideal_soil initialization"
+>     CALL nl_set_mminlu(1,'USGS')
+>     DO j=jts,min(jde-1,jte)
+>     DO i=its,min(ide-1,ite)
+>       grid%ivgtyp(i,j) = 10 !corresponds to savanna
+>       grid%lu_index(i,j) = grid%ivgtyp(i,j)
+>       grid%isltyp(i,j) = 3 !corresponds to sandy loam
+>       grid%landmask(i,j) = 1.0 !1 for land, 2 for water
+>       grid%xland(i,j) = 1.0
+>       grid%greenfrac = 0.10000001 !monthly greenness fraction between 0 and 1
+> !---2m values---
+>       grid%q2(i,j)  = interp_0(qv,   zk,grid%ht(i,j),nl_in)
+>       grid%th2(i,j) = interp_0(theta,zk,grid%ht(i,j),nl_in)
+>       grid%t2(i,j) = grid%th2(i,j)*(((grid%p(i,1,j)+grid%pb(i,1,j))/p1000mb)**rcp)
+>       grid%psfc(i,j) = grid%p(i,1,j)+grid%pb(i,1,j)
+> !---10m values---
+>       grid%u10(i,j) = interp_0(u,zk,grid%ht(i,j)+10.0,nl_in)
+>       grid%v10(i,j) = interp_0(v,zk,grid%ht(i,j)+10.0,nl_in)
+>     ENDDO
+>     ENDDO
+> 
+>     CALL monthly_interp_to_date ( grid%greenfrac , current_date , grid%vegfra ,&
+>                                   ids , ide , jds , jde , kds , kde , &
+>                                   ims , ime , jms , jme , kms , kme , &
+>                                   its , ite , jts , jte , kts , kte )
+> 
+>     CALL monthly_min_max ( grid%greenfrac , grid%shdmin , grid%shdmax , &
+>                            ids , ide , jds , jde , kds , kde , &
+>                            ims , ime , jms , jme , kms , kme , &
+>                            its , ite , jts , jte , kts , kte )
+> 
+>     DO j=jts,MIN(jte,jde-1)
+>     DO i=its,MIN(ite,ide-1)
+>       grid%vegfra(i,j) = grid%vegfra(i,j)*100.0 !vegetation fraction
+>       grid%shdmax(i,j) = grid%shdmax(i,j)*100.0 !annual max veg fraction
+>       grid%shdmin(i,j) = grid%shdmin(i,j)*100.0 !annual min veg fraction
+>       grid%snoalb(i,j) = 60.0 !average from owens valley data
+>       DO ns=1,config_flags%num_soil_layers
+>         grid%tslb(i,ns,j) = grid%t2(i,j) !initialize soil temp as equal to atm
+>         grid%smois(i,ns,j) = 0.0868 !twenty percent saturation rate*porosity for sandy loam
+> !        grid%smois(i,ns,j) = 0.0 !zero percent saturation rate*porosity for
+> !        sandy loam
+>       ENDDO
+>       grid%sst(i,j) = grid%tsk(i,j) !sst is sea surface temperature, tsk is surface skin temperature
+>       grid%albbck(i,j) = 0.27 !background albedo
+>       grid%xlat(i,j) = 0.0
+>       grid%xlong(i,j) = 0.0
+>     END DO
+>     END DO
+> 
+>     DO j=jts,MIN(jte,jde-1)
+>     DO i=its,ite
+>       grid%xlat_u(i,j) = 0.0
+>       grid%xlong_u(i,j) = 0.0
+>     ENDDO
+>     ENDDO
+> 
+>     DO j=jts,jte
+>     DO i=its,MIN(ite,ide-1)
+>       grid%xlat_v(i,j) = 0.0
+>       grid%xlong_v(i,j) = 0.0
+>     ENDDO
+>     ENDDO
+> 
+>     grid%zs = [0.05, 0.25, 0.70, 1.5] !from real initialization, depths ofcenters of soil layers
+>     grid%dzs = [0.1, 0.3, 0.6, 1.0] !from real initialization, thicknesses ofsoil layers
+> 
+>   ENDIF !ideal_soil 
+> 
+849a1008,1120
+> 
+> !DJW 140408 copied subroutine monthly_min_max from module_initialize_real
+>    SUBROUTINE monthly_min_max ( field_in , field_min , field_max , &
+>                       ids , ide , jds , jde , kds , kde , &
+>                       ims , ime , jms , jme , kms , kme , &
+>                       its , ite , jts , jte , kts , kte )
+> 
+>    !  Plow through each month, find the max, min values for each i,j.
+> 
+>       IMPLICIT NONE
+> 
+>       INTEGER , INTENT(IN)        :: ids , ide , jds , jde , kds , kde , &
+>                                      ims , ime , jms , jme , kms , kme , &
+>                                      its , ite , jts , jte , kts , kte
+> 
+>       REAL , DIMENSION(ims:ime,12,jms:jme) , INTENT(IN)  :: field_in
+>       REAL , DIMENSION(ims:ime,   jms:jme) , INTENT(OUT) :: field_min ,field_max
+> 
+>       !  Local vars
+> 
+>       INTEGER :: i , j , l
+>       REAL :: minner , maxxer
+> 
+>       DO j = jts , MIN(jde-1,jte)
+>          DO i = its , MIN(ide-1,ite)
+>             minner = field_in(i,1,j)
+>             maxxer = field_in(i,1,j)
+>             DO l = 2 , 12
+>                IF ( field_in(i,l,j) .LT. minner ) THEN
+>                   minner = field_in(i,l,j)
+>                END IF
+>                IF ( field_in(i,l,j) .GT. maxxer ) THEN
+>                   maxxer = field_in(i,l,j)
+>                END IF
+>             END DO
+>             field_min(i,j) = minner
+>             field_max(i,j) = maxxer
+>          END DO
+>       END DO
+> 
+>    END SUBROUTINE monthly_min_max
+> !DJW end of copy of monthly_min_max
+> 
+> !DJW 140408 copied subroutine monthly_interp_to_date from module_initialize_real
+>    SUBROUTINE monthly_interp_to_date ( field_in , date_str , field_out , &
+>                       ids , ide , jds , jde , kds , kde , &
+>                       ims , ime , jms , jme , kms , kme , &
+>                       its , ite , jts , jte , kts , kte )
+> 
+>    !  Linrarly in time interpolate data to a current valid time.  The data is
+>    !  assumed to come in "monthly", valid at the 15th of every month.
+> 
+>       IMPLICIT NONE
+> 
+>       INTEGER , INTENT(IN)        :: ids , ide , jds , jde , kds , kde , &
+>                                      ims , ime , jms , jme , kms , kme , &
+>                                      its , ite , jts , jte , kts , kte
+> 
+>       CHARACTER (LEN=24) , INTENT(IN) :: date_str
+>       REAL , DIMENSION(ims:ime,12,jms:jme) , INTENT(IN)  :: field_in
+>       REAL , DIMENSION(ims:ime,   jms:jme) , INTENT(OUT) :: field_out
+> 
+>       !  Local vars
+> 
+>       INTEGER :: i , j , l
+>       INTEGER , DIMENSION(0:13) :: middle
+>       INTEGER :: target_julyr , target_julday , target_date
+>       INTEGER :: julyr , julday , int_month , month1 , month2
+>       REAL :: gmt
+>       CHARACTER (LEN=4) :: yr
+>       CHARACTER (LEN=2) :: mon , day15
+> 
+> 
+>       WRITE(day15,FMT='(I2.2)') 15
+>       DO l = 1 , 12
+>          WRITE(mon,FMT='(I2.2)') l
+>          CALL get_julgmt(date_str(1:4)//'-'//mon//'-'//day15//'_'//'00:00:00.0000' , julyr , julday ,gmt)
+>          middle(l) = julyr*1000 + julday
+>       END DO
+> 
+>       l = 0
+>       middle(l) = middle( 1) - 31
+> 
+>       l = 13
+>       middle(l) = middle(12) + 31
+> 
+>       CALL get_julgmt ( date_str , target_julyr , target_julday , gmt )
+>       target_date = target_julyr * 1000 + target_julday
+>       find_month : DO l = 0 , 12
+>          IF ( ( middle(l) .LT. target_date ) .AND. ( middle(l+1) .GE.target_date ) ) THEN
+>             DO j = jts , MIN ( jde-1 , jte )
+>                DO i = its , MIN (ide-1 , ite )
+>                   IF ( skip_middle_points_t ( ids , ide , jds , jde , i , j , em_width , hold_ups ) ) CYCLE
+>                   int_month = l
+>                   IF ( ( int_month .EQ. 0 ) .OR. ( int_month .EQ. 12 ) ) THEN
+>                      month1 = 12
+>                      month2 =  1
+>                   ELSE
+>                      month1 = int_month
+>                      month2 = month1 + 1
+>                   END IF
+>                   field_out(i,j) =  ( field_in(i,month2,j) * ( target_date -middle(l)   ) + &
+>                                       field_in(i,month1,j) * ( middle(l+1) -target_date ) ) / &
+>                                     ( middle(l+1) - middle(l) )
+>                END DO
+>             END DO
+>             EXIT find_month
+>          END IF
+>       END DO find_month
+> 
+>    END SUBROUTINE monthly_interp_to_date
+> !DJW end of copy of monthly_interp_to_date
+> 

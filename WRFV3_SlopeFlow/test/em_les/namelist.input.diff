@@ -1,0 +1,7 @@
+99a100,105
+>  ideal_terrain			             = 4, 
+>  slope1			            	     = 3,
+>  fetch1         				     = 3000,
+>  slope2                              = 5,
+>  fetch2                              = 1000,
+>  ideal_soil		            	     = .true.,
