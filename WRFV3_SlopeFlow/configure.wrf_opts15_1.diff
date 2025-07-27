@@ -1,0 +1,6 @@
+153,154c153,154
+< SCC             =       icx -std=gnu89
+< CCOMP           =       icx -std=gnu89
+---
+> SCC             =       icc
+> CCOMP           =       icc
