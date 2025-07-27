@@ -125,7 +125,7 @@ CONTAINS
    LOGICAL :: stretch_grid, dry_sounding
 
   INTEGER :: xs , xe , ys , ye
-  REAL :: mtn_ht,x_dist,y_dist,L1,L2,H1,H,sinetheta1,sinetheta2
+  REAL :: mtn_ht,x_dist,y_dist,L1,L2,H1,H,tantheta1,tantheta2
    LOGICAL, EXTERNAL :: wrf_dm_on_monitor
 !  For LES, add randx
    real :: randx
@@ -534,28 +534,19 @@ CONTAINS
       DO i=its,ite-1
          ! calculate x with x=0 as the middle of the domain
          x_dist = ABS((-ide/2.)*config_flags%dx + i*config_flags%dx)
-         sinetheta1=SIN(config_flags%slope1*pi/180.0)
-         sinetheta2=SIN(config_flags%slope2*pi/180.0)
+         tantheta1=TAN(config_flags%slope1*pi/180.0)
+         tantheta2=TAN(config_flags%slope2*pi/180.0)
          L1=config_flags%fetch1
          L2=config_flags%fetch2
-         H1=sinetheta1*L1
-         H=H1+sinetheta2*L2
+         H1=tantheta1*L1
+         H=H1+tantheta2*L2
          if (x_dist>=L1+L2) then
             grid%ht(i,j) = 0.
          elseif (x_dist>L2) then
-            grid%ht(i,j) = H1-sinetheta1*(x_dist-L2)
+            grid%ht(i,j) = H1-tantheta1*(x_dist-L2)
          else
-            grid%ht(i,j) = H-sinetheta2*x_dist
+            grid%ht(i,j) = H-tantheta2*x_dist
          endif
-         ! calculate the y distance with y=0 as the middle of the domain
-         !y_dist = (-jde/2.)*config_flags%dy + j*config_flags%dy
-         !if (ABS(y_dist)<=100000.) then
-          !  grid%ht(i,j) = grid%ht(i,j)
-         !elseif ((ABS(y_dist)>100000.).AND.(ABS(y_dist)<109000.)) then
-          !  grid%ht(i,j) = grid%ht(i,j)*(0.5+0.5*COS((pi*(ABS(y_dist)-100000.))/9000.))
-!         elseif (ABS(y_dist)>=109000.) then
- !           grid%ht(i,j) = 0.
-  !       endif
       ENDDO
       ENDDO
 
