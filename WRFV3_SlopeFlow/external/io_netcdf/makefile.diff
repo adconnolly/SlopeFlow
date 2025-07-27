@@ -1,0 +1,13 @@
+7,11c7,8
+< #LIBS    = $(LIB_LOCAL) -L$(NETCDFPATH)/lib -lnetcdf
+< #LIBFFS  = $(LIB_LOCAL) -L$(NETCDFPATH)/lib -lnetcdff -lnetcdf $(NETCDF4_DEP_LIB)
+< # If path to NetCDF C library differs from the fortran library
+< LIBS    =  $(LIB_LOCAL) -L$(NETCDF_C)/lib             -lnetcdf
+< LIBFFS  =               -L$(NETCDFPATH)/lib -lnetcdff          $(NETCDF4_DEP_LIB)
+---
+> LIBS    = $(LIB_LOCAL) -L$(NETCDFPATH)/lib -lnetcdf
+> LIBFFS  = $(LIB_LOCAL) -L$(NETCDFPATH)/lib -lnetcdff -lnetcdf $(NETCDF4_DEP_LIB)
+57c54
+<             $(FC) $(FFLAGS) $(LDFLAGS) -o diffwrf diffwrf.o $(OBJSL) ../../frame/wrf_debug.o ../../frame/module_wrf_error.o ../../frame/clog.o $(ESMF_IO_LIB_EXT) $(LIBS) $(LIBFFS) ;\
+---
+>             $(FC) $(FFLAGS) $(LDFLAGS) -o diffwrf diffwrf.o $(OBJSL) ../../frame/wrf_debug.o ../../frame/module_wrf_error.o ../../frame/clog.o $(ESMF_IO_LIB_EXT) $(LIBFFS) ;\
