@@ -1,0 +1,6 @@
+68,69c68,69
+< #include <tirpc/rpc/types.h>
+< #include <tirpc/rpc/xdr.h>
+---
+> #include <rpc/types.h>
+> #include <rpc/xdr.h>
