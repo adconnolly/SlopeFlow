@@ -1,0 +1,35 @@
+# .bashrc
+# Last Modified: 2014/11/12
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# ---INTEL--------------------------------------------------------------------------------------
+module load intel-oneapi-compilers/2023.1.0 intel-oneapi-mpi/2021.10.0
+
+# ---NETCDF-------------------------------------------------------------------------------------
+module load netcdf-fortran/4.6.1
+export NETCDF="/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-2023.1.0/netcdf-fortran-4.6.1-a3crtmsoaua43patl537xgfmo6iuvb4q"
+
+# module load netcdf-c/4.9.2 loaded auto by netcdf-fortran, but need path to link in io_netcdf/makefile
+export NETCDF_C="/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-2023.1.0/netcdf-c-4.9.2-ou2g5zqm4wyuw7djuz46rfmg36gn6mnv"
+
+# ---- HDF5
+module load hdf5
+export HDF5="/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-2023.1.0/hdf5-1.14.3-s25wauega4j2ha2beb3ccamgwfjntjn5"
+
+# ---Perl-------------------------------------------------------------------------------------
+#module load perl
+
+#------ long list shortcut
+alias ll="ls -l"
+
+# ---SCRATCH------------------------------------------------------------
+export SCRATCH="/global/scratch/adac"
+
+# vi indstead of vim
+#alias vim="vi"
+
+alias sq="squeue -q aiolos_savio_normal"
