@@ -1,0 +1,2 @@
+107d106
+< landread.o: CFLAGS += -I/usr/include/tirpc -D__TIRPC__

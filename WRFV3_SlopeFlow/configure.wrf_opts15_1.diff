@@ -4,3 +4,7 @@
 ---
 > SCC             =       icc
 > CCOMP           =       icc
+251c251
+<                       -L$(WRF_SRC_ROOT_DIR)/external/io_netcdf -lwrfio_nf -L/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-2023.1.0/netcdf-fortran-4.6.1-a3crtmsoaua43patl537xgfmo6iuvb4q/lib -lnetcdff      -L/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-2023.1.0/hdf5-1.14.3-s25wauega4j2ha2beb3ccamgwfjntjn5/lib -lhdf5_fortran -lhdf5 -ltirpc -lm -lz
+---
+>                       -L$(WRF_SRC_ROOT_DIR)/external/io_netcdf -lwrfio_nf -L/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-2023.1.0/netcdf-fortran-4.6.1-a3crtmsoaua43patl537xgfmo6iuvb4q/lib -lnetcdff      -L/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-2023.1.0/hdf5-1.14.3-s25wauega4j2ha2beb3ccamgwfjntjn5/lib -lhdf5_fortran -lhdf5 -lm -lz
