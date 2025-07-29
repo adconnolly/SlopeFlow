@@ -25,11 +25,3 @@ export HDF5="/global/software/rocky-8.x86_64/intel/linux-rocky8-x86_64/oneapi-20
 
 #------ long list shortcut
 alias ll="ls -l"
-
-# ---SCRATCH------------------------------------------------------------
-export SCRATCH="/global/scratch/adac"
-
-# vi indstead of vim
-#alias vim="vi"
-
-alias sq="squeue -q aiolos_savio_normal"
