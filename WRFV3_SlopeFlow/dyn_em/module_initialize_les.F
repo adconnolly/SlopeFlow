@@ -530,8 +530,8 @@ CONTAINS
       ENDDO
       ENDDO
   elseif (config_flags%ideal_terrain == 4) then
-      DO j=jts,jte-1
-      DO i=its,ite-1
+      DO j=jts,MIN(jte,jde-1)
+      DO i=its,MIN(ite,ide-1)
          ! calculate x with x=0 as the middle of the domain
          x_dist = ABS((-ide/2.)*config_flags%dx + i*config_flags%dx)
          tantheta1=TAN(config_flags%slope1*pi/180.0)
