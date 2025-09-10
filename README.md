@@ -3,6 +3,9 @@
 # SlopeFlow
 Models for slope flows, particularly downslope, drainage flows.
 
+Further details are provided in the article: Connolly, Alex, and Chow, Fotini K. "Simulations of drainage flows with topographic shading and surface physics inform analytical models" Atmosphere ? (2025): ?.
+The data presented there can be found at [doi.org/10.5281/zenodo.17013827](https://doi.org/10.5281/zenodo.17013827).
+
 ## Set up
 To set up:
 ```
@@ -13,6 +16,9 @@ wget https://github.com/NCAR/WRFV3/archive/refs/tags/V3.9.1.1.tar.gz
 tar -xvzf WRFV3-3.9.1.1.tar.gz && mv WRFV3-3.9.1.1 WRFV3
 cp -a WRFV3_SlopeFlow/. WRFV3/
 cd WRFV3
+```
+A configure.wrf is included with fixes (see below) allowing compilation on Berkeley's Savio high performance computer with environment variables and modules as defined in bashWRFV3. Once properly configured, compile with
+```
 ./compile -j 1 em_les |& tee compile.log
 ```
 
