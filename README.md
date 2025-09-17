@@ -3,7 +3,8 @@
 # SlopeFlow
 Models for slope flows, particularly downslope, drainage flows.
 
-Further details are provided in the article: Connolly, Alex, and Chow, Fotini K. "Simulations of drainage flows with topographic shading and surface physics inform analytical models" Atmosphere ? (2025): ?.
+Further details are provided in the article: Connolly, Alex, and Chow, Fotini K. "Simulations of drainage flows with topographic shading and surface physics inform analytical models" Atmosphere 16.9 (2025): 1091. DOI: [https://doi.org/10.3390/atmos16091091](10.3390/atmos16091091).
+
 The data presented there can be found at [doi.org/10.5281/zenodo.17013827](https://doi.org/10.5281/zenodo.17013827).
 
 ## Set up
